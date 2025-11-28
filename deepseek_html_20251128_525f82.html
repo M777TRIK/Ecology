@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Эко-викторина</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a535c 0%, #2E8B57 50%, #4a7c59 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        h2 {
+            margin: 20px 0;
+            color: #FFD700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .difficulty-levels {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .difficulty-btn {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .difficulty-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+            border-color: #FFD700;
+        }
+        
+        .difficulty-btn.selected {
+            background: rgba(255, 215, 0, 0.3);
+            border-color: #FFD700;
+            transform: translateY(-5px);
+        }
+        
+        .difficulty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .difficulty-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .difficulty-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .option:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            background-color: rgba(255, 215, 0, 0.3);
+            border-color: #FFD700;
+        }
+        
+        button {
+            background-color: #FFD700;
+            color: #333;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            margin: 10px;
+        }
+        
+        button:hover {
+            background-color: #FFC400;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #FFD700;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .result-message {
+            font-size: 1.3rem;
+            margin: 20px 0;
+            min-height: 30px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .final-score {
+            font-size: 4rem;
+            margin: 30px 0;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+        }
+        
+        .score-text {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+        
+        .hint-btn {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            margin: 5px;
+        }
+        
+        .hint-text {
+            background-color: rgba(33, 150, 243, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-style: italic;
+            display: none;
+            text-align: left;
+        }
+        
+        .leaderboard {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+        
+        .leaderboard th {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .leaderboard td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .leaderboard tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .leaderboard tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .medal {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .current-player-highlight {
+            background: rgba(255, 215, 0, 0.3) !important;
+            font-weight: bold;
+        }
+        
+        .tabs {
+            display: flex;
+            margin: 20px 0;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid #FFD700;
+            color: #FFD700;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .result-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .difficulty-levels {
+                flex-direction: column;
+            }
+            
+            .difficulty-btn {
+                min-width: auto;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option {
+                font-size: 1rem;
+                padding: 12px 15px;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                text-align: center;
+            }
+            
+            .final-score {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Экран выбора уровня сложности -->
+        <div id="difficulty-screen" class="screen active">
+            <h1>Эко-викторина</h1>
+            <p class="subtitle">Выберите уровень сложности</p>
+            
+            <div class="difficulty-levels">
+                <div class="difficulty-btn" data-difficulty="easy">
+                    <div class="difficulty-icon">🌱</div>
+                    <div class="difficulty-title">Начальный</div>
+                    <div class="difficulty-desc">Основные понятия экологии</div>
+                </div>
+                
+                <div class="difficulty-btn" data-difficulty="medium">
+                    <div class="difficulty-icon">🌿</div>
+                    <div class="difficulty-title">Средний</div>
+                    <div class="difficulty-desc">Углубленные знания</div>
+                </div>
+                
+                <div class="difficulty-btn" data-difficulty="hard">
+                    <div class="difficulty-icon">🌳</div>
+                    <div class="difficulty-title">Продвинутый</div>
+                    <div class="difficulty-desc">Сложные научные вопросы</div>
+                </div>
+            </div>
+            
+            <button id="start-btn" style="display: none;">Начать тестирование</button>
+        </div>
+        
+        <!-- Экран регистрации -->
+        <div id="register-screen" class="screen">
+            <h1>Эко-викторина</h1>
+            <p class="subtitle">Перед началом тестирования</p>
+            
+            <div class="form-group">
+                <label for="firstName">Имя:</label>
+                <input type="text" id="firstName" placeholder="Введите ваше имя">
+            </div>
+            
+            <div class="form-group">
+                <label for="lastName">Фамилия:</label>
+                <input type="text" id="lastName" placeholder="Введите вашу фамилию">
+            </div>
+            
+            <button id="register-btn">Начать тестирование</button>
+        </div>
+        
+        <!-- Экран игры -->
+        <div id="game-screen" class="screen">
+            <div class="stats">
+                <div>Студент: <span id="player-name">Имя Фамилия</span></div>
+                <div>Вопрос: <span id="current-question">1</span>/20</div>
+                <div>Баллы: <span id="score">0</span></div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="progress-bar"></div>
+            </div>
+            <div class="question" id="question-text"></div>
+            
+            <div class="options" id="options-container"></div>
+            <div class="hint-text" id="hint-text"></div>
+            <div class="result-message" id="result-message"></div>
+            
+            <div>
+                <button id="hint-btn" class="hint-btn">📝 Подсказка</button>
+            </div>
+            
+            <button id="confirm-btn" style="display: none;">Подтвердить ответ</button>
+            <button id="next-btn" style="display: none;">Следующий вопрос</button>
+        </div>
+        
+        <!-- Экран результатов -->
+        <div id="results-screen" class="screen">
+            <h1>Результаты тестирования</h1>
+            
+            <div class="result-info">
+                <div class="final-score" id="final-score">0/20</div>
+                <div class="score-text" id="score-text"></div>
+            </div>
+            
+            <div id="result-message-final"></div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="leaderboard">🏆 Рейтинг</div>
+                <div class="tab" data-tab="answers">📋 Ответы</div>
+            </div>
+            
+            <div class="tab-content active" id="leaderboard-tab">
+                <h2>Рейтинг участников</h2>
+                <table class="leaderboard" id="leaderboard">
+                    <thead>
+                        <tr>
+                            <th>Место</th>
+                            <th>Участник</th>
+                            <th>Баллы</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <!-- Данные будут заполнены через JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="tab-content" id="answers-tab">
+                <h2>Ваши ответы</h2>
+                <div id="all-answers-container">
+                    <!-- Все ответы будут показаны здесь -->
+                </div>
+            </div>
+            
+            <button id="restart-btn">Пройти тест снова</button>
+        </div>
+    </div>
+
+    <script>
+        // База вопросов с разными уровнями сложности
+        const questionBank = {
+            easy: [
+                {
+                    question: "Что такое экология?",
+                    options: [
+                        "Наука о взаимоотношениях организмов с окружающей средой",
+                        "Наука о растениях",
+                        "Наука о животных", 
+                        "Наука о погоде"
+                    ],
+                    correct: 0,
+                    explanation: "Экология изучает взаимоотношения организмов между собой и с окружающей средой.",
+                    hint: "Эта наука рассматривает связи в природе"
+                },
+                {
+                    question: "Какой газ необходим растениям для фотосинтеза?",
+                    options: [
+                        "Кислород",
+                        "Азот",
+                        "Углекислый газ",
+                        "Водород"
+                    ],
+                    correct: 2,
+                    explanation: "Растения поглощают углекислый газ в процессе фотосинтеза.",
+                    hint: "Этот газ мы выдыхаем"
+                },
+                {
+                    question: "Что такое фотосинтез?",
+                    options: [
+                        "Процесс дыхания растений",
+                        "Процесс создания органических веществ из неорганических",
+                        "Процесс размножения растений",
+                        "Процесс роста растений"
+                    ],
+                    correct: 1,
+                    explanation: "Фотосинтез - процесс создания органических веществ из CO2 и воды на свету.",
+                    hint: "Происходит в хлоропластах"
+                },
+                {
+                    question: "Что такое пищевая цепь?",
+                    options: [
+                        "Цепь из продуктов в магазине",
+                        "Последовательность питания организмов",
+                        "Цепь для животных",
+                        "Метод охоты"
+                    ],
+                    correct: 1,
+                    explanation: "Пищевая цепь показывает, кто кем питается в экосистеме.",
+                    hint: "Начинается с растений"
+                },
+                {
+                    question: "Что такое заповедник?",
+                    options: [
+                        "Место для отдыха",
+                        "Охраняемая природная территория",
+                        "Лесное хозяйство",
+                        "Ферма"
+                    ],
+                    correct: 1,
+                    explanation: "Заповедник - территория, где охраняется природа в естественном состоянии.",
+                    hint: "Здесь запрещена хозяйственная деятельность"
+                },
+                {
+                    question: "Что такое глобальное потепление?",
+                    options: [
+                        "Похолодание климата",
+                        "Повышение средней температуры на Земле",
+                        "Увеличение количества осадков",
+                        "Усиление ветров"
+                    ],
+                    correct: 1,
+                    explanation: "Глобальное потепление - повышение средней температуры Земли due to деятельности человека.",
+                    hint: "Связано с парниковым эффектом"
+                },
+                {
+                    question: "Что такое переработка отходов?",
+                    options: [
+                        "Вывоз мусора на свалку",
+                        "Сжигание мусора",
+                        "Повторное использование материалов",
+                        "Закапывание мусора"
+                    ],
+                    correct: 2,
+                    explanation: "Переработка позволяет использовать отходы как сырье для новых продуктов.",
+                    hint: "Символ - три стрелки по кругу"
+                },
+                {
+                    question: "Что такое биоразнообразие?",
+                    options: [
+                        "Количество животных",
+                        "Разнообразие видов в экосистеме",
+                        "Количество растений",
+                        "Размер территории"
+                    ],
+                    correct: 1,
+                    explanation: "Биоразнообразие - разнообразие видов живых организмов в экосистеме.",
+                    hint: "Важный показатель здоровья экосистемы"
+                },
+                {
+                    question: "Что такое возобновляемые источники энергии?",
+                    options: [
+                        "Уголь и нефть",
+                        "Источники, которые не исчерпываются",
+                        "Атомная энергия",
+                        "Газ"
+                    ],
+                    correct: 1,
+                    explanation: "Возобновляемые источники (солнце, ветер, вода) практически неисчерпаемы.",
+                    hint: "Солнечные батареи, ветряки"
+                },
+                {
+                    question: "Что такое экосистема?",
+                    options: [
+                        "Только растения",
+                        "Только животные",
+                        "Сообщество организмов и среда их обитания",
+                        "Только почва"
+                    ],
+                    correct: 2,
+                    explanation: "Экосистема включает все живые организмы и среду их обитания.",
+                    hint: "Единство живого и неживого"
+                }
+            ],
+            
+            medium: [
+                {
+                    question: "Что такое парниковый эффект?",
+                    options: [
+                        "Нагрев атмосферы due to парниковых газов",
+                        "Охлаждение атмосферы",
+                        "Образование облаков",
+                        "Выпадение осадков"
+                    ],
+                    correct: 0,
+                    explanation: "Парниковый эффект - нагрев атмосферы due to поглощения ИК-излучения парниковыми газами.",
+                    hint: "Естественный процесс, усиленный человеком"
+                },
+                {
+                    question: "Что такое сукцессия?",
+                    options: [
+                        "Миграция животных",
+                        "Смена видового состава сообщества",
+                        "Размножение организмов",
+                        "Питание организмов"
+                    ],
+                    correct: 1,
+                    explanation: "Сукцессия - процесс последовательной смены биоценозов в экосистеме.",
+                    hint: "Бывает первичная и вторичная"
+                },
+                {
+                    question: "Что такое биосфера?",
+                    options: [
+                        "Только атмосфера",
+                        "Только гидросфера",
+                        "Область распространения жизни на Земле",
+                        "Только литосфера"
+                    ],
+                    correct: 2,
+                    explanation: "Биосфера - глобальная экосистема Земли, область распространения жизни.",
+                    hint: "Термин ввел В.И. Вернадский"
+                },
+                {
+                    question: "Что такое консументы?",
+                    options: [
+                        "Производители органики",
+                        "Потребители готовой органики",
+                        "Разрушители органики",
+                        "Растения"
+                    ],
+                    correct: 1,
+                    explanation: "Консументы - гетеротрофные организмы, потребляющие готовую органику.",
+                    hint: "Животные, грибы, некоторые бактерии"
+                },
+                {
+                    question: "Что такое редуценты?",
+                    options: [
+                        "Производители",
+                        "Потребители",
+                        "Разрушители органики",
+                        "Хищники"
+                    ],
+                    correct: 2,
+                    explanation: "Редуценты разлагают органические вещества до неорганических.",
+                    hint: "Бактерии и грибы"
+                },
+                {
+                    question: "Что такое экологическая ниша?",
+                    options: [
+                        "Место обитания вида",
+                        "Совокупность условий существования вида",
+                        "Пространственное расположение",
+                        "Количество особей"
+                    ],
+                    correct: 1,
+                    explanation: "Экологическая ниша - совокупность условий, необходимых для существования вида.",
+                    hint: "Включает не только место, но и образ жизни"
+                },
+                {
+                    question: "Что такое эвтрофикация?",
+                    options: [
+                        "Загрязнение тяжелыми металлами",
+                        "Обогащение водоемов питательными веществами",
+                        "Закисление среды",
+                        "Радиоактивное загрязнение"
+                    ],
+                    correct: 1,
+                    explanation: "Эвтрофикация - обогащение водоемов биогенными элементами, приводящее к цветению воды.",
+                    hint: "Вызывает бурный рост водорослей"
+                },
+                {
+                    question: "Что такое Красная книга?",
+                    options: [
+                        "Список опасных видов",
+                        "Список исчезающих видов",
+                        "Список полезных видов",
+                        "Список инвазивных видов"
+                    ],
+                    correct: 1,
+                    explanation: "Красная книга содержит сведения о редких и исчезающих видах.",
+                    hint: "Бывает международной и национальной"
+                },
+                {
+                    question: "Что такое ООПТ?",
+                    options: [
+                        "Опасные отходы",
+                        "Особо охраняемые природные территории",
+                        "Очистные сооружations",
+                        "Органические удобрения"
+                    ],
+                    correct: 1,
+                    explanation: "ООПТ - территории с особым режимом охраны природы.",
+                    hint: "Заповедники, национальные парки и др."
+                },
+                {
+                    question: "Что такое устойчивое развитие?",
+                    options: [
+                        "Развитие без учета экологии",
+                        "Развитие, удовлетворяющее потребности настоящего без ущерба для будущего",
+                        "Быстрое развитие",
+                        "Замедленное развитие"
+                    ],
+                    correct: 1,
+                    explanation: "Устойчивое развитие учитывает интересы как нынешних, так и будущих поколений.",
+                    hint: "Баланс между экономикой, обществом и экологией"
+                }
+            ],
+            
+            hard: [
+                {
+                    question: "Какой механизм лежит в основе биоаккумуляции ксенобиотиков?",
+                    options: [
+                        "Увеличение растворимости в липидах",
+                        "Синтез новых соединений",
+                        "Медленный метаболизм и выведение",
+                        "Все перечисленные механизмы"
+                    ],
+                    correct: 2,
+                    explanation: "Биоаккумуляция происходит due to медленного метаболизма и выведения ксенобиотиков.",
+                    hint: "Рассмотрите метаболические пути детоксикации"
+                },
+                {
+                    question: "Что такое принцип конкурентного исключения Гаузе?",
+                    options: [
+                        "Два вида не могут занимать одну экологическую нишу",
+                        "Виды сотрудничают для выживания",
+                        "Хищники регулируют численность жертв",
+                        "Все виды равны в экосистеме"
+                    ],
+                    correct: 0,
+                    explanation: "Два вида с одинаковыми экологическими потребностями не могут сосуществовать.",
+                    hint: "Вспомните эксперименты с инфузориями"
+                },
+                {
+                    question: "Какой процесс доминирует в трансформации азота в анаэробных условиях?",
+                    options: [
+                        "Нитрификация",
+                        "Денитрификация",
+                        "Аммонификация",
+                        "Ассимиляционная редукция"
+                    ],
+                    correct: 1,
+                    explanation: "В анаэробных условиях преобладает денитрификация.",
+                    hint: "Учтите окислительно-восстановительные потенциалы"
+                },
+                {
+                    question: "Что такое теория островной биогеографии?",
+                    options: [
+                        "Теория распределения видов на островах",
+                        "Теория миграции птиц",
+                        "Теория эволюции видов",
+                        "Теория изменения климата"
+                    ],
+                    correct: 0,
+                    explanation: "Теория объясняет зависимость видового богатства от площади и изоляции.",
+                    hint: "МакАртур и Уилсон"
+                },
+                {
+                    question: "Что такое фиторемедиация?",
+                    options: [
+                        "Очистка среды растениями",
+                        "Очистка бактериями",
+                        "Химическая очистка",
+                        "Физическая очистка"
+                    ],
+                    correct: 0,
+                    explanation: "Фиторемедиация - использование растений для очистки загрязненной среды.",
+                    hint: "Включает несколько механизмов"
+                },
+                {
+                    question: "Что такое концепция планетарных границ?",
+                    options: [
+                        "Границы между странами",
+                        "Пределы устойчивости экологических процессов",
+                        "Орбиты планет",
+                        "Климатические зоны"
+                    ],
+                    correct: 1,
+                    explanation: "Планетарные границы - пределы устойчивости ключевых экологических процессов.",
+                    hint: "Концепция Й. Рокстрёма"
+                },
+                {
+                    question: "Что такое биомагнификация?",
+                    options: [
+                        "Увеличение размеров организмов",
+                        "Накопление загрязнителей в трофических цепях",
+                        "Увеличение биомассы",
+                        "Все перечисленные"
+                    ],
+                    correct: 1,
+                    explanation: "Биомагнификация - увеличение концентрации загрязнителей на каждом трофическом уровне.",
+                    hint: "Отличие от биоаккумуляции"
+                },
+                {
+                    question: "Что такое ЛД50?",
+                    options: [
+                        "Летальная доза для 50% особей",
+                        "Лечебная доза",
+                        "Профилактическая доза",
+                        "Минимальная доза"
+                    ],
+                    correct: 0,
+                    explanation: "ЛД50 - доза, вызывающая гибель 50% подопытных животных.",
+                    hint: "Показатель острой токсичности"
+                },
+                {
+                    question: "Что такое экосистемные услуги?",
+                    options: [
+                        "Услуги по охране природы",
+                        "Полезные функции экосистем для человека",
+                        "Услуги по очистке среды",
+                        "Услуги по мониторингу"
+                    ],
+                    correct: 1,
+                    explanation: "Экосистемные услуги - benefits, которые люди получают от экосистем.",
+                    hint: "Очистка воздуха и воды, опыление, рекреация"
+                },
+                {
+                    question: "Что такое circular экономика?",
+                    options: [
+                        "Экономика замкнутого цикла",
+                        "Экономика линейного типа",
+                        "Экономика потребления",
+                        "Экономика производства"
+                    ],
+                    correct: 0,
+                    explanation: "Circular экономика предполагает многократное использование ресурсов.",
+                    hint: "Противоположность линейной экономике"
+                }
+            ]
+        };
+
+        // Элементы DOM
+        const difficultyScreen = document.getElementById('difficulty-screen');
+        const registerScreen = document.getElementById('register-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+        const startBtn = document.getElementById('start-btn');
+        const registerBtn = document.getElementById('register-btn');
+        const confirmBtn = document.getElementById('confirm-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const hintBtn = document.getElementById('hint-btn');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const playerNameEl = document.getElementById('player-name');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const resultMessage = document.getElementById('result-message');
+        const hintText = document.getElementById('hint-text');
+        const currentQuestionEl = document.getElementById('current-question');
+        const scoreEl = document.getElementById('score');
+        const progressBar = document.getElementById('progress-bar');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreTextEl = document.getElementById('score-text');
+        const resultMessageFinal = document.getElementById('result-message-final');
+        const leaderboardBody = document.getElementById('leaderboard-body');
+        const allAnswersContainer = document.getElementById('all-answers-container');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Переменные игры
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let playerName = "";
+        let usedHints = 0;
+        let leaderboard = [];
+        let currentPlayerRank = 0;
+        let selectedAnswerIndex = -1;
+        let answerConfirmed = false;
+        let currentQuestions = [];
+        let selectedDifficulty = "";
+
+        // Функции
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function getRandomQuestions(difficulty, count) {
+            const questions = questionBank[difficulty];
+            return shuffleArray(questions).slice(0, count);
+        }
+
+        function loadLeaderboard() {
+            const savedLeaderboard = localStorage.getItem('ecoQuizLeaderboard');
+            if (savedLeaderboard) {
+                leaderboard = JSON.parse(savedLeaderboard);
+            }
+        }
+
+        function saveToLeaderboard() {
+            const playerResult = {
+                name: playerName,
+                score: score,
+                difficulty: selectedDifficulty,
+                date: new Date().toLocaleDateString('ru-RU'),
+                timestamp: new Date().getTime(),
+                answers: userAnswers
+            };
+            
+            leaderboard.push(playerResult);
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 10);
+            
+            localStorage.setItem('ecoQuizLeaderboard', JSON.stringify(leaderboard));
+        }
+
+        function displayLeaderboard() {
+            leaderboardBody.innerHTML = '';
+            
+            leaderboard.forEach((player, index) => {
+                const row = document.createElement('tr');
+                
+                let medal = '';
+                if (index === 0) medal = '🥇';
+                else if (index === 1) medal = '🥈';
+                else if (index === 2) medal = '🥉';
+                
+                const isCurrentPlayer = player.name === playerName && player.timestamp === userAnswers[0]?.timestamp;
+                if (isCurrentPlayer) {
+                    currentPlayerRank = index + 1;
+                    row.classList.add('current-player-highlight');
+                }
+                
+                row.innerHTML = `
+                    <td>${medal} ${index + 1}</td>
+                    <td>${player.name} ${isCurrentPlayer ? ' (Вы)' : ''}</td>
+                    <td>${player.score}/10</td>
+                    <td>${player.date}</td>
+                `;
+                
+                leaderboardBody.appendChild(row);
+            });
+        }
+
+        function displayAllAnswers() {
+            allAnswersContainer.innerHTML = '';
+            
+            userAnswers.forEach((answer, index) => {
+                const questionData = currentQuestions[index];
+                const answerItem = document.createElement('div');
+                answerItem.style.background = answer.isCorrect ? 'rgba(76, 175, 80, 0.2)' : 'rgba(255, 255, 255, 0.1)';
+                answerItem.style.padding = '15px';
+                answerItem.style.borderRadius = '10px';
+                answerItem.style.margin = '10px 0';
+                answerItem.style.borderLeft = answer.isCorrect ? '4px solid #4CAF50' : '4px solid #F44336';
+                
+                answerItem.innerHTML = `
+                    <h3>Вопрос ${index + 1} ${answer.isCorrect ? '✅' : '❌'}</h3>
+                    <p><strong>${answer.question}</strong></p>
+                    <div style="margin: 10px 0;">
+                        <div style="background: rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 5px;">
+                            <strong>Ваш ответ:</strong> ${answer.userAnswer}
+                        </div>
+                        ${!answer.isCorrect ? `
+                        <div style="background: rgba(76, 175, 80, 0.2); padding: 10px; border-radius: 5px; margin-top: 5px;">
+                            <strong>Правильный ответ:</strong> ${answer.correctAnswer}
+                        </div>
+                        ` : ''}
+                    </div>
+                    <p><em>${answer.explanation}</em></p>
+                    ${answer.usedHint ? '<p style="color: #2196F3; margin-top: 10px;">💡 Вы использовали подсказку</p>' : ''}
+                `;
+                
+                allAnswersContainer.appendChild(answerItem);
+            });
+        }
+
+        // Обработчики событий
+        difficultyBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                difficultyBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedDifficulty = btn.getAttribute('data-difficulty');
+                startBtn.style.display = 'block';
+            });
+        });
+
+        startBtn.addEventListener('click', () => {
+            difficultyScreen.classList.remove('active');
+            registerScreen.classList.add('active');
+        });
+
+        registerBtn.addEventListener('click', startGame);
+        confirmBtn.addEventListener('click', confirmAnswer);
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', restartGame);
+        hintBtn.addEventListener('click', showHint);
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        function startGame() {
+            const firstName = firstNameInput.value.trim();
+            const lastName = lastNameInput.value.trim();
+            
+            if (!firstName || !lastName) {
+                alert('Пожалуйста, введите имя и фамилию');
+                return;
+            }
+            
+            playerName = `${firstName} ${lastName}`;
+            playerNameEl.textContent = playerName;
+            
+            // Генерируем случайные вопросы выбранного уровня сложности
+            currentQuestions = getRandomQuestions(selectedDifficulty, 10);
+            
+            registerScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            usedHints = 0;
+            selectedAnswerIndex = -1;
+            answerConfirmed = false;
+            
+            loadLeaderboard();
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            questionText.textContent = question.question;
+            optionsContainer.innerHTML = '';
+            resultMessage.textContent = '';
+            hintText.style.display = 'none';
+            hintText.textContent = '';
+            hintBtn.disabled = false;
+            confirmBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            selectedAnswerIndex = -1;
+            answerConfirmed = false;
+            
+            currentQuestionEl.textContent = currentQuestionIndex + 1;
+            scoreEl.textContent = score;
+            progressBar.style.width = `${(currentQuestionIndex / currentQuestions.length) * 100}%`;
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectAnswer(index));
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function selectAnswer(selectedIndex) {
+            if (answerConfirmed) return;
+            
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            options[selectedIndex].classList.add('selected');
+            selectedAnswerIndex = selectedIndex;
+            
+            confirmBtn.style.display = 'block';
+            nextBtn.style.display = 'none';
+        }
+
+        function confirmAnswer() {
+            if (selectedAnswerIndex === -1) {
+                resultMessage.textContent = 'Пожалуйста, выберите ответ';
+                resultMessage.style.color = '#FF9800';
+                return;
+            }
+            
+            const question = currentQuestions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            const isCorrect = selectedAnswerIndex === question.correct;
+            userAnswers.push({
+                question: question.question,
+                userAnswer: question.options[selectedAnswerIndex],
+                correctAnswer: question.options[question.correct],
+                isCorrect: isCorrect,
+                explanation: question.explanation,
+                usedHint: hintText.style.display === 'block',
+                timestamp: new Date().getTime()
+            });
+            
+            if (isCorrect) {
+                score++;
+                resultMessage.textContent = 'Ответ принят ✓';
+                resultMessage.style.color = '#4CAF50';
+            } else {
+                resultMessage.textContent = 'Ответ принят';
+                resultMessage.style.color = '#FFFFFF';
+            }
+            
+            confirmBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+            hintBtn.disabled = true;
+            answerConfirmed = true;
+            
+            scoreEl.textContent = score;
+        }
+
+        function showHint() {
+            const question = currentQuestions[currentQuestionIndex];
+            hintText.textContent = question.hint;
+            hintText.style.display = 'block';
+            hintBtn.disabled = true;
+            usedHints++;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < currentQuestions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            gameScreen.classList.remove('active');
+            resultsScreen.classList.add('active');
+            
+            finalScoreEl.textContent = `${score}/${currentQuestions.length}`;
+            
+            let scoreText = '';
+            if (score === currentQuestions.length) {
+                scoreText = 'Идеальный результат!';
+            } else if (score >= currentQuestions.length * 0.8) {
+                scoreText = 'Отличный результат!';
+            } else if (score >= currentQuestions.length * 0.6) {
+                scoreText = 'Хороший результат!';
+            } else {
+                scoreText = 'Старайтесь лучше!';
+            }
+            scoreTextEl.textContent = scoreText;
+            
+            let message = '';
+            if (score === currentQuestions.length) {
+                message = '🎉 Блестящий результат!';
+            } else if (score >= currentQuestions.length * 0.8) {
+                message = '👍 Отличные знания!';
+            } else if (score >= currentQuestions.length * 0.6) {
+                message = '👌 Хороший уровень!';
+            } else {
+                message = '💪 Рекомендуется дополнительное изучение!';
+            }
+            
+            resultMessageFinal.textContent = message;
+            
+            saveToLeaderboard();
+            displayLeaderboard();
+            displayAllAnswers();
+        }
+
+        function restartGame() {
+            resultsScreen.classList.remove('active');
+            difficultyScreen.classList.add('active');
+            firstNameInput.value = '';
+            lastNameInput.value = '';
+            startBtn.style.display = 'none';
+            difficultyBtns.forEach(b => b.classList.remove('selected'));
+            selectedDifficulty = "";
+        }
+
+        firstNameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                lastNameInput.focus();
+            }
+        });
+        
+        lastNameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startGame();
+            }
+        });
+    </script>
+</body>
+</html>
