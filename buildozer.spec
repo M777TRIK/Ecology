@@ -10,6 +10,9 @@ requirements = python3,kivy,plyer,requests,pandas,numpy,urllib3,chardet,idna,cer
 
 android.permissions = INTERNET, POST_NOTIFICATIONS, FOREGROUND_SERVICE
 android.api = 33
+android.accept_sdk_license = True
+android.skip_update = False
+android.build_tools_version = 34.0.0
 android.minapi = 23
 android.archs = arm64-v8a
 orientation = portrait
